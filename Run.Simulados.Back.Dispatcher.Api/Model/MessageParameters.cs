@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Run.Simulados.Back.Dispatcher.Api.Model
 {
-    public class MessageParameters
+    public class MessageParameters : Message
     {
         public IDictionary<string,string> Parameters { get; set; }
     }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Run.Simulados.Back.Dispatcher.Api.AutoMapper;
 using Run.Simulados.Back.Dispatcher.Api.Helpers;
 
 namespace Run.Simulados.Back.Dispatcher.Api
@@ -26,6 +27,10 @@ namespace Run.Simulados.Back.Dispatcher.Api
         {
             services.AddControllers();
             services.Configure<ConfigEmail>(_configuration.GetSection("ConfigEmail"));
+
+            var mapper = AutoMapperConfig.Configure();
+            services.AddSingleton(mapper);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
