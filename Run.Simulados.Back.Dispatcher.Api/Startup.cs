@@ -11,7 +11,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Run.Simulados.Back.Dispatcher.Api.AutoMapper;
+using Run.Simulados.Back.Dispatcher.Api.Business;
 using Run.Simulados.Back.Dispatcher.Api.Helpers;
+using Run.Simulados.Back.Dispatcher.Api.Interface.Business;
+using Run.Simulados.Back.Dispatcher.Api.Interface.Repository;
+using Run.Simulados.Back.Dispatcher.Api.Interface.Service;
+using Run.Simulados.Back.Dispatcher.Api.Repository;
+using Run.Simulados.Back.Dispatcher.Api.Service;
 
 namespace Run.Simulados.Back.Dispatcher.Api
 {
@@ -37,6 +43,11 @@ namespace Run.Simulados.Back.Dispatcher.Api
             });
             services.AddControllers();
             services.Configure<ConfigEmail>(_configuration.GetSection("ConfigEmail"));
+
+            services.AddScoped<IEmailBusiness, EmailBusiness>();
+            services.AddScoped<IEmailBuilderService, EmailBuilderService>();
+            services.AddScoped<IEmailSenderService, EmailSenderService>();
+            services.AddScoped<IEmailTemplateRepository, EmailTemplateRepository>();
 
             var mapper = AutoMapperConfig.Configure();
             services.AddSingleton(mapper);

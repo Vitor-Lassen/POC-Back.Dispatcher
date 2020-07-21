@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Run.Simulados.Back.Dispatcher.Api.DTO;
+using Run.Simulados.Back.Dispatcher.Api.Interface.Business;
 using Run.Simulados.Back.Dispatcher.Api.Model;
 
 namespace Run.Simulados.Back.Dispatcher.Api.Controller
@@ -15,14 +16,18 @@ namespace Run.Simulados.Back.Dispatcher.Api.Controller
     public class EmailController : ControllerBase
     {
         private readonly IMapper _mapper;
-        public EmailController(IMapper mapper)
+        private readonly IEmailBusiness _emailBusiness;
+        public EmailController(IEmailBusiness emailBusiness,
+                               IMapper mapper)
         {
+            _emailBusiness = emailBusiness;
             _mapper = mapper;
         }
-        [HttpGet]
+        [HttpPost]
         public IActionResult SendEmail(ContactUsDTO dto)
         {
-            var result = _mapper.Map<MessageParameters>(dto);
+            var message = _mapper.Map<MessageParameters>(dto);
+            _emailBusiness.EmailTreatment(message);
             return Ok();
         }
     }
