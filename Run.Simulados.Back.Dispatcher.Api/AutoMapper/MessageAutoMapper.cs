@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Run.Simulados.Back.Dispatcher.Api.DTO;
+using Run.Simulados.Back.Dispatcher.Api.Enum;
 using Run.Simulados.Back.Dispatcher.Api.Model;
 using Run.Simulados.Back.Dispatcher.Api.Utils;
 using System;
@@ -13,8 +14,13 @@ namespace Run.Simulados.Back.Dispatcher.Api.AutoMapper
     {
         public MessageAutoMapper()
         {
-            CreateMap<ContactUsDTO, MessageParameters>()          
-                .ForMember(d => d.Parameters, o => o.MapFrom(s => s.ToDictionary()));
+            CreateMap<ContactUsDTO, MessageParameters>()
+                .ForMember(d => d.Parameters, o => o.MapFrom(s => s.ToDictionary()))
+                .BeforeMap((s, d) => d.Type = MessageTypeEnum.ContactUs);
+
+            CreateMap<EmptyEmailDTO, MessageParameters>()
+               .ForMember(d => d.Parameters, o => o.MapFrom(s => s.ToDictionary()))
+               .BeforeMap((s, d) => d.Type = MessageTypeEnum.Empty);
         }
     }
 }

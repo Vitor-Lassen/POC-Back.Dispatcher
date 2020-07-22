@@ -24,7 +24,16 @@ namespace Run.Simulados.Back.Dispatcher.Api.Controller
             _mapper = mapper;
         }
         [HttpPost]
-        public IActionResult SendEmail(ContactUsDTO dto)
+        [Route("ContactUs")]
+        public IActionResult SendContactUs(ContactUsDTO dto)
+        {
+            var message = _mapper.Map<MessageParameters>(dto);
+            _emailBusiness.EmailTreatment(message);
+            return Ok();
+        }
+        [HttpPost]
+        [Route("Send")]
+        public IActionResult SendEmail(EmptyEmailDTO dto)
         {
             var message = _mapper.Map<MessageParameters>(dto);
             _emailBusiness.EmailTreatment(message);
