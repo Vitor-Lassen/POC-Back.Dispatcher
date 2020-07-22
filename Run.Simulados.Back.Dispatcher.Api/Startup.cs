@@ -43,6 +43,7 @@ namespace Run.Simulados.Back.Dispatcher.Api
             });
             services.AddControllers();
             services.Configure<ConfigEmail>(_configuration.GetSection("ConfigEmail"));
+            services.Configure<List<TemplateEmailConfig>>(_configuration.GetSection("TemplateEmail"));
 
             services.AddScoped<IEmailBusiness, EmailBusiness>();
             services.AddScoped<IEmailBuilderService, EmailBuilderService>();

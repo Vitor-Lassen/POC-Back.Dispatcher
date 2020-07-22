@@ -12,12 +12,9 @@ namespace Run.Simulados.Back.Dispatcher.Api.Service
     public class EmailBuilderService : IEmailBuilderService
     {
         private readonly IEmailTemplateRepository _emailTemplateRepository;
-        private readonly string _supportEmail;
-        public EmailBuilderService(IEmailTemplateRepository emailTemplateRepository, 
-                                   IConfiguration configuration)
+        public EmailBuilderService(IEmailTemplateRepository emailTemplateRepository)
         {
             _emailTemplateRepository = emailTemplateRepository;
-            _supportEmail = configuration.GetSection("SupportEmail").Value;
         }
         public IList<Email> Build(Message message)
         {
@@ -38,10 +35,7 @@ namespace Run.Simulados.Back.Dispatcher.Api.Service
         {
             email.Subject = ReplaceParameters(email.Subject, messageParameters.Parameters);
             email.Body = ReplaceParameters(email.Body, messageParameters.Parameters);
-            if (email.ToClient)
-                email.Address = messageParameters.Email;
-            else
-                email.Address = _supportEmail;
+            email.Address = ReplaceParameters(messageParameters.Email, messageParameters.Parameters);
         }
         private string ReplaceParameters(string template, IDictionary<string,string> parameters)
         {

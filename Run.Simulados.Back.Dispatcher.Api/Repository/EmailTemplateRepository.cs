@@ -1,4 +1,6 @@
-﻿using Run.Simulados.Back.Dispatcher.Api.Enum;
+﻿using Microsoft.Extensions.Options;
+using Run.Simulados.Back.Dispatcher.Api.Enum;
+using Run.Simulados.Back.Dispatcher.Api.Helpers;
 using Run.Simulados.Back.Dispatcher.Api.Interface.Repository;
 using Run.Simulados.Back.Dispatcher.Api.Model;
 using System;
@@ -11,31 +13,24 @@ namespace Run.Simulados.Back.Dispatcher.Api.Repository
 {
     public class EmailTemplateRepository : IEmailTemplateRepository
     {
+        private readonly List<TemplateEmailConfig> _templateEmailConfig;
+        public EmailTemplateRepository(IOptions<List<TemplateEmailConfig>> templateEmailConfig)
+        {
+            _templateEmailConfig = templateEmailConfig.Value;
+        }
         public IList<Email> GetEmailTemplate(MessageTypeEnum messageTypeEnum)
         {
-            return GetEmailTemplateContactUs();
-        }
-        private IList<Email> GetEmailTemplateContactUs()
-        {
-            return new List<Email>()
+            var templates = _templateEmailConfig.Find(s => s.MessageType == messageTypeEnum);
+            foreach (var email in templates.Emails)
             {
-                new Email()
-                {
-                    ToClient = true,
-                    Subject = "Agradecemos seu contato",
-                    Body = GetEmailTemplateByName("ContactUSToClient")
-                },
-                new Email()
-                {
-                    ToClient = false,
-                    Subject = "Novo contato de {{Name}} {{LastName}}",
-                    Body = GetEmailTemplateByName("ContactUSToSupport")
-                }
-            };
+                email.Body = GetEmailTemplateByName(email.Body);
+            }
+            return templates.Emails;
         }
+
         private string GetEmailTemplateByName(string templateName)
         {
-            FileStream fileStream = new FileStream($"Repository/Templates/{templateName}.html", FileMode.Open);
+            FileStream fileStream = new FileStream($"Repository/Templates/{templateName}", FileMode.Open);
             using (StreamReader reader = new StreamReader(fileStream))
             {
                 return reader.ReadToEnd();
