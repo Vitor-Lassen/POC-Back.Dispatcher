@@ -23,7 +23,13 @@ namespace Run.Simulados.Back.Dispatcher.Api.Repository
                 {
                     ToClient = true,
                     Subject = "Agradecemos seu contato",
-                    Body = GetEmailTemplateByName("ContactUSToCliente")
+                    Body = GetEmailTemplateByName("ContactUSToClient")
+                },
+                new Email()
+                {
+                    ToClient = false,
+                    Subject = "Novo contato de {{Name}} {{LastName}}",
+                    Body = GetEmailTemplateByName("ContactUSToSupport")
                 }
             };
         }
