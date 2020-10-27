@@ -1,4 +1,4 @@
-image: docker:stable
+image: ubuntu
 
 services:
   - docker:dind
@@ -7,14 +7,18 @@ before_script:
   - docker info
 
 build:
-
   before_script:
-    - docker login registry.gitlab.com -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD}
+      - apt-get update
+      - echo "deb http://toolbelt.heroku.com/ubuntu ./" > /etc/apt/sources.list.d/heroku.list
+      - apt-get install -y wget
+      - wget -O- https://toolbelt.heroku.com/apt/release.key | apt-key add -
+      - apt-get update
+      - apt-get install -y heroku-toolbelt
+      - gem install dpl
+  variables:
+      HEROKU_API_KEY: $HEROKU_ACCOUNT_KEY
   script:
-    - docker build -t ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest .
-    - docker push ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest
-  after_script:
-    - docker logout ${CI_REGISTRY}
+      - dpl --provider=heroku --app=staging-formulariocontato --api-key=$HEROKU_API_KEY
+      - heroku run rake db:migrate --exit-code --app staging-formulariocontato
   stage: build
-  tags: 
-    - docker
+ 
