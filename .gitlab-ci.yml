@@ -12,9 +12,9 @@ docker-build:
   stage: build
   script:
   - docker build -f Dockerfile --iidfile imageid.txt -t registry.heroku.com/run-simulados-messaging-dev/dispatcher .
-  - docker login --username=_ --password=$HEROKU_ACCOUNT_KEY registry.heroku.com
+  - docker login --username=_ --password=5e4bc685-e1d3-4af6-b010-85e33f29c3cc registry.heroku.com
   - docker push registry.heroku.com/run-simulados-messaging-dev/dispatcher
   - apk add --no-cache curl
   - echo "Docker Image ID is $(cat imageid.txt)"
   - |-
-    curl -X PATCH https://api.heroku.com/apps/run-simulados-messaging-dev/formation --header "Content-Type: application/json" --header "Accept: application/vnd.heroku+json; version=3.docker-releases" --header "Authorization: Bearer $HEROKU_ACCOUNT_KEY" --data '{ "updates": [ { "type": "web", "docker_image": "'$(cat imageid.txt)'" } ] }'
+    curl -X PATCH https://api.heroku.com/apps/run-simulados-messaging-dev/formation --header "Content-Type: application/json" --header "Accept: application/vnd.heroku+json; version=3.docker-releases" --header "Authorization: Bearer 5e4bc685-e1d3-4af6-b010-85e33f29c3cc" --data '{ "updates": [ { "type": "web", "docker_image": "'$(cat imageid.txt)'" } ] }'
