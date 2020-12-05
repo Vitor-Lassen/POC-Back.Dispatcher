@@ -1,24 +1,20 @@
-image: ubuntu
-
+image: docker:latest
 services:
   - docker:dind
 
-before_script:
-  - docker info
+variables:
+  DOCKER_DRIVER: overlay
 
-build:
-  before_script:
-      - apt-get update
-      - echo "deb http://toolbelt.heroku.com/ubuntu ./" > /etc/apt/sources.list.d/heroku.list
-      - apt-get install -y wget
-      - wget -O- https://toolbelt.heroku.com/apt/release.key | apt-key add -
-      - apt-get update
-      - apt-get install -y heroku-toolbelt
-      - gem install dpl
-  variables:
-      HEROKU_API_KEY: $HEROKU_ACCOUNT_KEY
-  script:
-      - dpl --provider=heroku --app=staging-formulariocontato --api-key=$HEROKU_API_KEY
-      - heroku run rake db:migrate --exit-code --app staging-formulariocontato
+stages:
+  - build
+  
+docker-build:
   stage: build
- 
+  script:
+  - docker build -f Dockerfile --iidfile imageid.txt -t registry.heroku.comrun-simulados-messaging-dev/dispatcher .
+  - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
+  - docker push registry.heroku.com/run-simulados-messaging-dev/dispatcher
+  - apk add --no-cache curl
+  - echo "Docker Image ID is $(cat imageid.txt)"
+  - |-
+    curl -X PATCH https://api.heroku.com/apps/run-simulados-messaging-dev/formation --header "Content-Type: application/json" --header "Accept: application/vnd.heroku+json; version=3.docker-releases" --header "Authorization: Bearer $HEROKU_API_KEY" --data '{ "updates": [ { "type": "web", "docker_image": "'$(cat imageid.txt)'" } ] }'
