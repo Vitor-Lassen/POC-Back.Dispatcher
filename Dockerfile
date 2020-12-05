@@ -22,5 +22,4 @@ COPY --from=publish /app/publish .
 
 RUN useradd -m myuser
 USER myuser
-ENTRYPOINT ["dotnet", "Run.Simulados.Back.Dispatcher.Api.dll","-p","5555:4444"]
-CMD ["-p","5555:4444"]
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet Run.Simulados.Back.Dispatcher.Api.dll
